@@ -82,7 +82,13 @@ def extract_all_data_on_page(page, year):
         else:
             for key, value in template_metrics.items():
                 if key in METRIC_NAMES:
-                    if not key.endswith("_?"):
+                    if value == "":
+                        logging.warn(
+                            "Empty value on page '{}' for key '{}'"
+                            .format(page, key)
+                        )
+                        continue
+                    elif not key.endswith("_?"):
                         contents[key] += int(value)
                     category = key.split("_")[0]
                     contents[category + "_total"] += int(value)
