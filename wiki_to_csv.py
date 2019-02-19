@@ -76,8 +76,8 @@ def extract_all_data_on_page(page, year):
             template_metrics[field] = value
         if template_metrics["year"] != str(year):
             logging.warn(
-                "Skipping template with wrong year: {}."
-                .format(template_metrics["year"])
+                "Skipping template with wrong year: {} on page {}."
+                .format(template_metrics["year"], page)
             )
         else:
             for key, value in template_metrics.items():
@@ -88,8 +88,7 @@ def extract_all_data_on_page(page, year):
                             .format(page, key)
                         )
                         continue
-                    elif not key.endswith("_?"):
-                        contents[key] += int(value)
+                    contents[key] += int(value)
                     category = key.split("_")[0]
                     contents[category + "_total"] += int(value)
     project_data = {
