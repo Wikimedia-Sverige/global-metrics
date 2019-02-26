@@ -137,5 +137,6 @@ def print_csv(data):
                 line.append(metric_value)
             writer.writerow(line)
 
-
-print_csv(get_all_page_data(2018))
+if __name__ == "__main__":
+    year = sys.argv[1]
+    print_csv(get_all_page_data(year))
