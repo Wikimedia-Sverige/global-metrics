@@ -138,5 +138,8 @@ def print_csv(data):
             writer.writerow(line)
 
 if __name__ == "__main__":
-    year = sys.argv[1]
+    if len(sys.argv) > 1:
+        year = sys.argv[1]
+    else:
+        year = datetime.datetime.now().year
     print_csv(get_all_page_data(year))
