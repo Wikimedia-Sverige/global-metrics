@@ -1,0 +1,8 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# pywikibot stuff
+apicache-py3/
+pywikibot.lwp
+throttle.ctrl
