@@ -69,7 +69,6 @@ def extract_all_data_on_page(page, year):
         template_name = template.title(withNamespace=False)
         if template_name != 'GlobalMetrics':
             continue
-        number_of_events += 1
         template_metrics = {}
         for param in params:
             (field, value) = extract_elements_from_template_param(param)
@@ -80,6 +79,7 @@ def extract_all_data_on_page(page, year):
                 .format(template_metrics["year"], page)
             )
         else:
+            number_of_events += 1
             for key, value in template_metrics.items():
                 if key in METRIC_NAMES:
                     if value == "":
