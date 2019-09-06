@@ -42,6 +42,20 @@ METRIC_NAMES = [
 ]
 
 
+def is_int(value):
+    """Check if the given value is an integer.
+
+    @param value: The value to check
+    @type value: str, or int
+    @return bool
+    """
+    try:
+        int(value)
+        return True
+    except (ValueError, TypeError):
+        return False
+
+
 def extract_elements_from_template_param(template_param):
 
     """Extract and sanitize the contents of a parsed template param."""
@@ -86,6 +100,12 @@ def extract_all_data_on_page(page, year):
                         logging.warn(
                             "Empty value on page '{}' for key '{}'"
                             .format(page, key)
+                        )
+                        continue
+                    elif not is_int(value):
+                        logging.warn(
+                            "Non-integer value on page '{}' for key '{}': {}"
+                            .format(page, key, value)
                         )
                         continue
                     contents[key] += int(value)
