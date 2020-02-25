@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 
 import re
@@ -88,7 +88,7 @@ def extract_all_data_on_page(page, year):
             (field, value) = extract_elements_from_template_param(param)
             template_metrics[field] = value
         if template_metrics["year"] != str(year):
-            logging.warn(
+            logging.info(
                 "Skipping template with wrong year: {} on page {}."
                 .format(template_metrics["year"], page)
             )
