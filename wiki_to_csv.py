@@ -8,6 +8,7 @@ from collections import OrderedDict
 import datetime
 import csv
 import sys
+import argparse
 
 import pywikibot
 from pywikibot import pagegenerators
@@ -76,12 +77,17 @@ def sanitize_wikitext_string(value):
 
 
 def extract_all_data_on_page(page, year):
+    logging.debug("=== {} ===".format(page))
     templates = page.templatesWithParams()
     contents = defaultdict(int)
     number_of_events = 0
     for (template, params) in templates:
+        logging.debug("--- Template ---")
         template_name = template.title(withNamespace=False)
         if template_name != 'GlobalMetrics':
+            logging.info(
+                "Skipping template with incorrect name '{}'".format(template)
+            )
             continue
         template_metrics = {}
         for param in params:
@@ -94,6 +100,7 @@ def extract_all_data_on_page(page, year):
             )
         else:
             number_of_events += 1
+            logging.debug("--- GlobalMetrics #{} ---".format(number_of_events))
             for key, value in template_metrics.items():
                 if key in METRIC_NAMES:
                     if value == "":
@@ -108,6 +115,7 @@ def extract_all_data_on_page(page, year):
                             .format(page, key, value)
                         )
                         continue
+                    logging.debug("Adding value to {}, {}".format(key, value))
                     contents[key] += int(value)
                     category = key.split("_")[0]
                     contents[category + "_total"] += int(value)
@@ -150,16 +158,19 @@ def print_csv(data):
     writer.writerow(meta_data)
     for key in METRIC_NAMES:
         printed_metric_names = data[list(data.keys())[0]]["metrics"]
-        if key in printed_metric_names:
-            line = [key]
-            for project in data:
-                metric_value = str(data[project]["metrics"][key])
-                line.append(metric_value)
-            writer.writerow(line)
+        line = [key]
+        for project in data:
+            metric_value = str(data[project]["metrics"][key])
+            line.append(metric_value)
+        writer.writerow(line)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        year = sys.argv[1]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--year", "-y", required=True)
+    parser.add_argument("--verbose", "-v", action="store_true")
+    args = parser.parse_args()
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
     else:
-        year = datetime.datetime.now().year
-    print_csv(get_all_page_data(year))
+        logging.basicConfig(level=logging.INFO)
+    print_csv(get_all_page_data(args.year))
