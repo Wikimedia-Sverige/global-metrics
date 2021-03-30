@@ -1,2 +1,2 @@
-pywikibot
+pywikibot==3.0.20190722
 mwparserfromhell
