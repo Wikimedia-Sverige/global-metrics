@@ -121,7 +121,6 @@ def extract_all_data_on_page(page, year):
                     contents[category + "_total"] += int(value)
     project_data = {
         "metrics": contents,
-        "record_date": datetime.date.today(),
         "number_of_events": number_of_events
     }
     return project_data
@@ -148,12 +147,32 @@ def get_all_page_data(year):
 
 def print_csv(data):
     writer = csv.writer(sys.stdout)
-    writer.writerow([""] + list(data.keys()))
     meta_data = ["meta_data"]
+
+	# Order projects according to file, if given.
+    if args.project_order_file:
+        ordered_data = {}
+        order = []
+        for l in open(args.project_order_file):
+            name = l.strip()
+            order.append(name)
+        for project in order:
+            if project in data:
+                ordered_data[project] = data[project]
+            else:
+                # If no data was found for a project,
+                # make a set of empty data.
+                ordered_data[project] = {
+                    "number_of_events": 0,
+                    "metrics" : {metric: 0 for metric in METRIC_NAMES}
+                }
+        data = ordered_data
+
+    writer.writerow([""] + list(data.keys()))
     for project in data.values():
         meta_data.append(
             "{} ({} st. event)"
-            .format(project["record_date"], project["number_of_events"])
+            .format(datetime.date.today(), project["number_of_events"])
         )
     writer.writerow(meta_data)
     for key in METRIC_NAMES:
@@ -168,6 +187,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--year", "-y", required=True)
     parser.add_argument("--verbose", "-v", action="store_true")
+    parser.add_argument(
+        "project_order_file",
+        help=("Path to a file containing project names in Swedish, one per line."
+              "The projects in the output will have the same order."),
+        nargs="?"
+    )
     args = parser.parse_args()
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
