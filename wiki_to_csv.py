@@ -58,9 +58,7 @@ def is_int(value):
 
 
 def extract_elements_from_template_param(template_param):
-
     """Extract and sanitize the contents of a parsed template param."""
-
     (field, _, value) = template_param.partition('=')
     # Remove leading or trailing spaces
     field = field.strip()
@@ -68,9 +66,7 @@ def extract_elements_from_template_param(template_param):
 
 
 def sanitize_wikitext_string(value):
-
     """Remove undesirable wikitext features from a string."""
-
     value = value.split("<ref")[0].strip()
     value = re.sub(r"\s?<!--.*?-->\s?", ' ', value)
     return value.strip()
@@ -149,39 +145,49 @@ def print_csv(data):
     writer = csv.writer(sys.stdout)
     meta_data = ["meta_data"]
 
-	# Order projects according to file, if given.
+    # Order projects according to file, if given.
     if args.project_order_file:
         ordered_data = {}
         order = []
+        blank_counter = 0
         for l in open(args.project_order_file):
             name = l.strip()
             order.append(name)
         for project in order:
             if project in data:
                 ordered_data[project] = data[project]
+            elif project == "":
+                ordered_data["_{}".format(blank_counter)] = {
+                    "number_of_events": "",
+                    "metrics": {metric: "" for metric in METRIC_NAMES}
+                }
+                blank_counter += 1
             else:
                 # If no data was found for a project,
                 # make a set of empty data.
                 ordered_data[project] = {
                     "number_of_events": 0,
-                    "metrics" : {metric: 0 for metric in METRIC_NAMES}
+                    "metrics": {metric: 0 for metric in METRIC_NAMES}
                 }
         data = ordered_data
 
     writer.writerow([""] + list(data.keys()))
-    for project in data.values():
-        meta_data.append(
-            "{} ({} st. event)"
-            .format(datetime.date.today(), project["number_of_events"])
-        )
+    for name, project in data.items():
+        if name.startswith('_'):
+            meta_data.append("")
+        else:
+            meta_data.append(
+                "{} ({} st. event)"
+                .format(datetime.date.today(), project["number_of_events"])
+            )
     writer.writerow(meta_data)
     for key in METRIC_NAMES:
-        printed_metric_names = data[list(data.keys())[0]]["metrics"]
         line = [key]
         for project in data:
             metric_value = str(data[project]["metrics"][key])
             line.append(metric_value)
         writer.writerow(line)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
