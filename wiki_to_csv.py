@@ -79,7 +79,7 @@ def extract_all_data_on_page(page, year):
     number_of_events = 0
     for (template, params) in templates:
         logging.debug("--- Template ---")
-        template_name = template.title(withNamespace=False)
+        template_name = template.title(with_ns=False)
         if template_name != 'GlobalMetrics':
             logging.info(
                 "Skipping template with incorrect name '{}'".format(template)
@@ -100,13 +100,13 @@ def extract_all_data_on_page(page, year):
             for key, value in template_metrics.items():
                 if key in METRIC_NAMES:
                     if value == "":
-                        logging.warn(
+                        logging.warning(
                             "Empty value on page '{}' for key '{}'"
                             .format(page, key)
                         )
                         continue
                     elif not is_int(value):
-                        logging.warn(
+                        logging.warning(
                             "Non-integer value on page '{}' for key '{}': {}"
                             .format(page, key, value)
                         )
@@ -134,7 +134,7 @@ def get_all_page_data(year):
                 project_name = page.title().split(":")[1].split("/")[0]
                 data[project_name] = project_data
         else:
-            logging.warn(
+            logging.warning(
                 "Template found outside of Global Metrics subpage: {}."
                 .format(page.title())
             )
