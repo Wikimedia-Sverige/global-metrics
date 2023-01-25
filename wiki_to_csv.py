@@ -20,21 +20,16 @@ METRIC_NAMES = [
     "deltagare_⚥",
     "deltagare_?",
     "deltagare_total",
-    "nya_♀",
-    "nya_♂",
-    "nya_⚥",
-    "nya_?",
-    "nya_total",
+    "redigerare_♀",
+    "redigerare_♂",
+    "redigerare_⚥",
+    "redigerare_?",
+    "redigerare_total",
     "org_♀",
     "org_♂",
     "org_⚥",
     "org_?",
     "org_total",
-    "audience_♀",
-    "audience_♂",
-    "audience_⚥",
-    "audience_?",
-    "audience_total",
     "content_wp",
     "content_com",
     "content_wd",
@@ -80,7 +75,7 @@ def extract_all_data_on_page(page, year):
     for (template, params) in templates:
         logging.debug("--- Template ---")
         template_name = template.title(with_ns=False)
-        if template_name != 'GlobalMetrics':
+        if template_name != 'Core metrics':
             logging.info(
                 "Skipping template with incorrect name '{}'".format(template)
             )
@@ -96,7 +91,7 @@ def extract_all_data_on_page(page, year):
             )
         else:
             number_of_events += 1
-            logging.debug("--- GlobalMetrics #{} ---".format(number_of_events))
+            logging.debug("--- Core metrics #{} ---".format(number_of_events))
             for key, value in template_metrics.items():
                 if key in METRIC_NAMES:
                     if value == "":
