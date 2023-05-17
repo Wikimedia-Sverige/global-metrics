@@ -40,4 +40,4 @@ You can specify an "order file" as a parameter which will be used to sort the pr
 
 ## Why "global-metrics"?
 
-When this script was created the metrics where called "Global metrics". They've since been replaced by "Core metrics".
+When this script was created the metrics were called "Global metrics". They've since been replaced by "Core metrics".
