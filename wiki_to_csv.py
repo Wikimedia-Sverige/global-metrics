@@ -123,7 +123,8 @@ def get_all_page_data(year):
     pages = cat.articles()
     data = OrderedDict()
     for page in pagegenerators.PreloadingGenerator(pages, 100):
-        if page.title().endswith("/Global Metrics"):
+        if (page.title().endswith("/Global Metrics") or
+                page.title().endswith("/Resultat och mätetal")):
             project_data = extract_all_data_on_page(page, year)
             if project_data:
                 project_name = page.title().split(":")[1].split("/")[0]
