@@ -131,7 +131,7 @@ def get_all_page_data(year):
                 data[project_name] = project_data
         else:
             logging.warning(
-                "Template found outside of Global Metrics subpage: {}."
+                "Template found outside of an expected subpage: {}."
                 .format(page.title())
             )
     return data
