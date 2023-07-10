@@ -123,14 +123,15 @@ def get_all_page_data(year):
     pages = cat.articles()
     data = OrderedDict()
     for page in pagegenerators.PreloadingGenerator(pages, 100):
-        if page.title().endswith("/Global Metrics"):
+        if (page.title().endswith("/Global Metrics") or
+                page.title().endswith("/Resultat och mätetal")):
             project_data = extract_all_data_on_page(page, year)
             if project_data:
                 project_name = page.title().split(":")[1].split("/")[0]
                 data[project_name] = project_data
         else:
             logging.warning(
-                "Template found outside of Global Metrics subpage: {}."
+                "Template found outside of an expected subpage: {}."
                 .format(page.title())
             )
     return data
