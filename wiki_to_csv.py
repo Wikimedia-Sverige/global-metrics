@@ -80,6 +80,7 @@ def extract_all_data_on_page(page, year):
                 "Skipping template with incorrect name '{}'".format(template)
             )
             continue
+
         template_metrics = {}
         for param in params:
             (field, value) = extract_elements_from_template_param(param)
@@ -89,27 +90,30 @@ def extract_all_data_on_page(page, year):
                 "Skipping template with wrong year: {} on page {}."
                 .format(template_metrics["year"], page)
             )
-        else:
-            number_of_events += 1
-            logging.debug("--- Core metrics #{} ---".format(number_of_events))
-            for key, value in template_metrics.items():
-                if key in METRIC_NAMES:
-                    if value == "":
-                        logging.warning(
-                            "Empty value on page '{}' for key '{}'"
-                            .format(page, key)
-                        )
-                        continue
-                    elif not is_int(value):
-                        logging.warning(
-                            "Non-integer value on page '{}' for key '{}': {}"
-                            .format(page, key, value)
-                        )
-                        continue
-                    logging.debug("Adding value to {}, {}".format(key, value))
-                    contents[key] += int(value)
-                    category = key.split("_")[0]
-                    contents[category + "_total"] += int(value)
+            continue
+
+        number_of_events += 1
+        logging.debug("--- Core metrics #{} ---".format(number_of_events))
+        for key, value in template_metrics.items():
+            if key in METRIC_NAMES:
+                if value == "":
+                    logging.warning(
+                        "Empty value on page '{}' for key '{}'"
+                        .format(page, key)
+                    )
+                    continue
+
+                if not is_int(value):
+                    logging.warning(
+                        "Non-integer value on page '{}' for key '{}': {}"
+                        .format(page, key, value)
+                    )
+                    continue
+
+                logging.debug("Adding value to {}, {}".format(key, value))
+                contents[key] += int(value)
+                category = key.split("_")[0]
+                contents[category + "_total"] += int(value)
     project_data = {
         "metrics": contents,
         "number_of_events": number_of_events
