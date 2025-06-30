@@ -1,2 +1,2 @@
-mwparserfromhell==0.6.6
+mwparserfromhell==0.7.1
 pywikibot==10.1.0
